@@ -16,7 +16,6 @@ WRONG_DIGEST = "d" * 128
 IMAGE_DIGEST = "c" * 128
 LOG = "commands.log"
 GOLEMD = "/nix/store/abc/bin/golemd"
-REPOSITORY = str(Path(BUILD_SCRIPT).resolve().parent.parent)
 
 TOUCH_OUTPUTS = (
     'for argument in "$@"; do\n'
@@ -118,38 +117,51 @@ def test_the_command_carries_the_pinned_base_and_the_disk_layout():
 
 
 def customization(tmp_path: Path, name: str) -> str:
-    return next(
-        line
-        for line in preview(tmp_path, name).splitlines()
-        if line.startswith("virt-customize")
-    )
+    lines = preview(tmp_path, name).splitlines()
+    start = next(index for index, line in enumerate(lines) if "virt-customize" in line)
+    end = start + 1
+    while end < len(lines) and lines[end].startswith(("├", "└")):
+        end += 1
+    return "\n".join(lines[start:end])
+
+
+def steps_of(text: str) -> list[tuple[str, str]]:
+    pairs: list[tuple[str, str]] = []
+    for line in text.splitlines()[1:]:
+        _, label, value = line.split(None, 2)
+        pairs.append((label, value))
+    return pairs
 
 
 @pytest.mark.parametrize("distro", distros.all_distros(), ids=distros.names())
 def test_every_declared_step_runs_in_order(tmp_path, distro):
-    words = customization(tmp_path, distro.name).split()
     runs = [
-        word.removeprefix(f"{REPOSITORY}/")
-        for index, word in enumerate(words)
-        if index and words[index - 1] == "--run"
+        value
+        for label, value in steps_of(customization(tmp_path, distro.name))
+        if label == "run"
     ]
     assert runs == [step.script for step in distro.steps]
 
 
 def test_a_payload_is_copied_in_immediately_before_the_step_that_needs_it(tmp_path):
-    assert (
-        f"--mkdir /tmp --copy-in {GOLEMD}:/tmp --chown 0:0:/tmp/golemd "
-        f"--run {REPOSITORY}/provision/20-golemd.sh"
-    ) in customization(tmp_path, "golem-ovh")
+    golemd_name = Path(GOLEMD).name
+    steps = steps_of(customization(tmp_path, "golem-ovh"))
+    index = steps.index(("run", "provision/20-golemd.sh"))
+    assert steps[index - 3 : index] == [
+        ("mkdir", "/tmp"),
+        ("copy", f"{golemd_name} → /tmp"),
+        ("chown", f"0:0 /tmp/{golemd_name}"),
+    ]
 
 
 def test_the_ovh_boot_hook_is_copied_in_last_owned_by_root_at_mode_0700(tmp_path):
-    hook = f"{REPOSITORY}/files/ovh/make_image_bootable.sh"
-    assert customization(tmp_path, "golem-ovh").endswith(
-        f"--mkdir /root/.ovh --copy-in {hook}:/root/.ovh "
-        "--chown 0:0:/root/.ovh/make_image_bootable.sh "
-        "--chmod 0700:/root/.ovh/make_image_bootable.sh"
-    )
+    steps = steps_of(customization(tmp_path, "golem-ovh"))
+    assert steps[-4:] == [
+        ("mkdir", "/root/.ovh"),
+        ("copy", "make_image_bootable.sh → /root/.ovh"),
+        ("chown", "0:0 /root/.ovh/make_image_bootable.sh"),
+        ("chmod", "0700 /root/.ovh/make_image_bootable.sh"),
+    ]
 
 
 def test_an_unknown_action_is_refused(tmp_path):

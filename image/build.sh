@@ -27,8 +27,9 @@ in_repository() {
 
 perform() {
     if [ -n "$dry_run" ]; then
-        echo "$@"
+        python3 -m golem_distros.cli.announcing "$@"
     else
+        python3 -m golem_distros.cli.announcing --live "$@"
         "$@"
     fi
 }

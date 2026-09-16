@@ -4,6 +4,7 @@ version = "1.0.0"
 description = "Debian Trixie qcow2 images with golemd, for OVH bare metal and DigitalOcean droplets"
 requires-python = ">=3.11"
 dependencies = [
+    "rich>=13.0.0,<15.0.0",
     "semver>=3.0.0,<4.0.0",
     "typer>=0.27.1,<1.0.0",
 ]

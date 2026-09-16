@@ -1,9 +1,11 @@
 import hashlib
-from collections.abc import Callable
 from pathlib import Path
 
+from rich.console import Console
+
+from golem_distros.cli import announcing
+
 CHUNK = 1024 * 1024
-PLACEHOLDER_DIGEST = "0" * 128
 
 
 class LocalFiles:
@@ -24,12 +26,12 @@ class LocalFiles:
 
 
 class DryRunFiles(LocalFiles):
-    def __init__(self, write: Callable[[str], None]) -> None:
-        self.write = write
+    def __init__(self, console: Console) -> None:
+        self.console = console
 
     def sha512(self, path: str) -> str:
-        self.write(f"sha512 {path}")
-        return PLACEHOLDER_DIGEST
+        announcing.render(["sha512", path], self.console)
+        return super().sha512(path)
 
     def write_text(self, path: str, text: str) -> None:
-        self.write(f"write {len(text)} bytes to {path}")
+        announcing.render(["write", str(len(text)), "bytes", "to", path], self.console)

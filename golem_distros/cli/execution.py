@@ -1,8 +1,11 @@
 import os
 import shlex
 import subprocess
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Mapping, Sequence
 
+from rich.console import Console
+
+from golem_distros.cli import announcing
 from golem_distros.ports import CommandFailed
 
 
@@ -21,12 +24,12 @@ class Subprocess:
 
 
 class DryRun:
-    def __init__(self, write: Callable[[str], None]) -> None:
-        self.write = write
+    def __init__(self, console: Console) -> None:
+        self.console = console
 
     def run(self, argv: Sequence[str], env: Mapping[str, str] | None = None) -> None:
-        self.write(shlex.join(argv))
+        announcing.render(list(argv), self.console)
 
     def capture(self, argv: Sequence[str]) -> str:
-        self.write(shlex.join(argv))
+        announcing.render(list(argv), self.console)
         return ""

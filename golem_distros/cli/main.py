@@ -6,13 +6,13 @@ from pathlib import Path
 import typer
 
 from golem_distros import distros
-from golem_distros.cli import booting, building, publishing, releasing
+from golem_distros.cli import announcing, booting, building, publishing, releasing
 from golem_distros.cli.execution import DryRun, Subprocess
 from golem_distros.cli.files import DryRunFiles, LocalFiles
 from golem_distros.cli.git import Git, repository_state
 from golem_distros.cli.workspace import Workspace
 from golem_distros.model import Distro
-from golem_distros.ports import CommandFailed, Files
+from golem_distros.ports import CommandFailed, Files, Runner
 
 GOLEMD_VARIABLE = "GOLEM_DISTROS_GOLEMD"
 LOCKFILE = "devenv.lock"
@@ -106,9 +106,14 @@ def publish(
 ) -> None:
     distro = chosen_distro(name)
     workspace = Workspace.discover()
-    files = DryRunFiles(typer.echo) if dry_run else LocalFiles()
+    if dry_run:
+        console = announcing.make_console()
+        files: Files = DryRunFiles(console)
+        runner: Runner = DryRun(console)
+    else:
+        files = LocalFiles()
+        runner = Subprocess()
     built = already_built(workspace, distro, files)
-    runner = DryRun(typer.echo) if dry_run else Subprocess()
     destination = (
         publishing.Destination.without_credentials()
         if dry_run
