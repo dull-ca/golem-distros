@@ -1,7 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
-set -x
+set -euxo pipefail
 
 rm -f /etc/resolv.conf
 echo "nameserver 213.186.33.99" >/etc/resolv.conf

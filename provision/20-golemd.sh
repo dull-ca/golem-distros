@@ -1,7 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
-set -x
+set -euxo pipefail
 
 install -d -m 0700 /etc/golem
 install -d -m 0700 /var/lib/golem
