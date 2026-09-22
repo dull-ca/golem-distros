@@ -1,7 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
-set -x
+set -euxo pipefail
 
 cat >/etc/cloud/cloud.cfg.d/90-golem.cfg <<'EOF'
 disable_root: false
