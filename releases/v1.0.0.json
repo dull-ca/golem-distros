@@ -1,0 +1,29 @@
+{
+  "version": "v1.0.0",
+  "released": "2026-09-23T19:37:50Z",
+  "commit": "610ee721dc589231ad11d5e9e2e8d05ecc2e9a54",
+  "golemd": {
+    "flake": "github:dull-ca/golem",
+    "rev": "71812a4c3ea25f23aa9f59380e1d0162b8b45883"
+  },
+  "images": {
+    "golem-do": {
+      "url": "https://golem-distros.s3.bhs.io.cloud.ovh.net/golem-do/v1.0.0/golem-do-21ee9ebd67ed2c06.qcow2",
+      "sha512": "21ee9ebd67ed2c066262d744a596e376ae00ff5ed919eec2e0d58c2a01fbf56fc76c745eab29e40cdca7bc10039e80eafd9bd3114d5055080c3ce5351486feb8",
+      "checksum_url": "https://golem-distros.s3.bhs.io.cloud.ovh.net/golem-do/v1.0.0/golem-do-21ee9ebd67ed2c06.qcow2.sha512",
+      "base": {
+        "url": "https://cloud.debian.org/images/cloud/trixie/20260831-2587/debian-13-generic-amd64-20260831-2587.qcow2",
+        "sha512": "5a069019420fb9441ad4f8004c661fadb747edd5662ca54a17c8f923dee7d717e21dbdaa4ba72d6fce7f920e0217f0a9af382298a7d46ed4bc9dc33ac19181b6"
+      }
+    },
+    "golem-ovh": {
+      "url": "https://golem-distros.s3.bhs.io.cloud.ovh.net/golem-ovh/v1.0.0/golem-ovh-21f6787588c4e50d.qcow2",
+      "sha512": "21f6787588c4e50dd0b745e82f8aebc10debf373b551424a437654eb4ce411b8928e64bf55a4347b1f19a8d0c9654db7a90a3f6c2810bccaa8f8d55a5831d281",
+      "checksum_url": "https://golem-distros.s3.bhs.io.cloud.ovh.net/golem-ovh/v1.0.0/golem-ovh-21f6787588c4e50d.qcow2.sha512",
+      "base": {
+        "url": "https://cloud.debian.org/images/cloud/trixie/20260831-2587/debian-13-generic-amd64-20260831-2587.qcow2",
+        "sha512": "5a069019420fb9441ad4f8004c661fadb747edd5662ca54a17c8f923dee7d717e21dbdaa4ba72d6fce7f920e0217f0a9af382298a7d46ed4bc9dc33ac19181b6"
+      }
+    }
+  }
+}
