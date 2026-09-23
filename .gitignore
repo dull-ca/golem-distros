@@ -1,0 +1,9 @@
+.devenv/
+.direnv/
+.venv/
+__pycache__/
+.pytest_cache/
+.env
+devenv.local.nix
+output/
+.superpowers/
